@@ -6,6 +6,9 @@ namespace SpiralPackages\Profiler\Driver;
 
 use SpiralPackages\Profiler\Profiler;
 
+use function uprofiler_disable;
+use function uprofiler_enable;
+
 final class UprofilerDriver implements DriverInterface
 {
     /** @psalm-suppress UndefinedConstant */
@@ -25,12 +28,12 @@ final class UprofilerDriver implements DriverInterface
         }
 
         /** @psalm-suppress UndefinedFunction */
-        \uprofiler_enable($flags, $options);
+        uprofiler_enable($flags, $options);
     }
 
     public function end(): array
     {
         /** @psalm-suppress UndefinedFunction */
-        return \uprofiler_disable();
+        return uprofiler_disable();
     }
 }

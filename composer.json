@@ -18,13 +18,14 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^7.4",
         "ext-curl": "*",
         "ext-json": "*",
-        "psr/log": "^3.0",
-        "symfony/http-client": "^6.2"
+        "psr/log": "^1|^2",
+        "symfony/http-client": "4.4.*"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5",
         "vimeo/psalm": "^4.9"

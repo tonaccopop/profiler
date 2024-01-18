@@ -2,6 +2,7 @@
 
 namespace SpiralPackages\Profiler;
 
+use DateTimeImmutable;
 use SpiralPackages\Profiler\Driver\DriverInterface;
 use SpiralPackages\Profiler\Storage\StorageInterface;
 
@@ -23,17 +24,25 @@ use SpiralPackages\Profiler\Storage\StorageInterface;
 final class Profiler
 {
     public const IGNORED_FUNCTIONS_KEY = 'ignored_functions';
+    private StorageInterface $storage;
+    private DriverInterface $driver;
+    private string $appName;
+    private array $tags = [];
 
     /**\
      * @param non-empty-string $appName
      * @param non-empty-string[] $tags
      */
     public function __construct(
-        private readonly StorageInterface $storage,
-        private readonly DriverInterface $driver,
-        private readonly string $appName,
-        private readonly array $tags = [],
+        StorageInterface $storage,
+        DriverInterface $driver,
+        string $appName,
+        array $tags = []
     ) {
+        $this->tags = $tags;
+        $this->appName = $appName;
+        $this->driver = $driver;
+        $this->storage = $storage;
     }
 
     /**
@@ -43,7 +52,7 @@ final class Profiler
      */
     public function start(array $ignoredFunctions = []): void
     {
-        $ignoredFunctions = \array_merge(
+        $ignoredFunctions = array_merge(
             $ignoredFunctions,
             ['SpiralPackages\Profiler\Profiler::end']
         );
@@ -62,10 +71,10 @@ final class Profiler
     {
         $result = $this->driver->end();
         $this->storage->store(
-            appName: $this->appName,
-            tags: \array_merge($this->tags, $tags),
-            date: new \DateTimeImmutable(),
-            data: $result
+            $this->appName,
+            array_merge($this->tags, $tags),
+            new DateTimeImmutable(),
+            $result
         );
 
         return $result;

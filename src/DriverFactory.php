@@ -11,19 +11,21 @@ use SpiralPackages\Profiler\Driver\TidyWaysDriver;
 use SpiralPackages\Profiler\Driver\UprofilerDriver;
 use SpiralPackages\Profiler\Driver\XhprofDriver;
 
+use function function_exists;
+
 final class DriverFactory
 {
     public static function detect(): DriverInterface
     {
-        if (\function_exists('xhprof_enable')) {
+        if (function_exists('xhprof_enable')) {
             return self::createXhrofDriver();
         }
 
-        if (\function_exists('tideways_xhprof_enable')) {
+        if (function_exists('tideways_xhprof_enable')) {
             return self::createTidyWaysDriver();
         }
 
-        if (\function_exists('uprofiler_enable')) {
+        if (function_exists('uprofiler_enable')) {
             return self::createUprofilerDriver();
         }
 

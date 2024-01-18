@@ -10,10 +10,14 @@ use SpiralPackages\Profiler\Converter\NullConverter;
 
 final class LogStorage implements StorageInterface
 {
+    private LoggerInterface $logger;
+    private ConverterInterface $converter;
     public function __construct(
-        private readonly LoggerInterface $logger,
-        private readonly ConverterInterface $converter = new NullConverter(),
+        LoggerInterface $logger,
+        ConverterInterface $converter = null
     ) {
+        $this->logger = $logger;
+        $this->converter = $converter ?? new NullConverter();
     }
 
     public function store(string $appName, array $tags, \DateTimeInterface $date, array $data): void

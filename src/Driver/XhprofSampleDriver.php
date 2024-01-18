@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace SpiralPackages\Profiler\Driver;
 
+use function explode;
+use function ini_get;
+use function ini_set;
+use function xhprof_sample_disable;
+use function xhprof_sample_enable;
+
 /**
  * @psalm-import-type TTrace from \SpiralPackages\Profiler\Profiler
  */
@@ -13,12 +19,12 @@ final class XhprofSampleDriver implements DriverInterface
 
     public function __construct()
     {
-        if (!\ini_get('xhprof.sampling_interval')) {
-            \ini_set('xhprof.sampling_interval', 10000);
+        if (!ini_get('xhprof.sampling_interval')) {
+            ini_set('xhprof.sampling_interval', 10000);
         }
 
-        if (!\ini_get('xhprof.sampling_depth')) {
-            \ini_set('xhprof.sampling_depth', 200);
+        if (!ini_get('xhprof.sampling_depth')) {
+            ini_set('xhprof.sampling_depth', 200);
         }
     }
 
@@ -26,13 +32,13 @@ final class XhprofSampleDriver implements DriverInterface
     {
         $this->startTime = \microtime(true);
         /** @psalm-suppress UndefinedFunction */
-        \xhprof_sample_enable();
+        xhprof_sample_enable();
     }
 
     public function end(): array
     {
         /** @psalm-suppress UndefinedFunction */
-        return $this->convertData(\xhprof_sample_disable());
+        return $this->convertData(xhprof_sample_disable());
     }
 
     /**
@@ -45,7 +51,7 @@ final class XhprofSampleDriver implements DriverInterface
         $prevTime = $this->startTime;
         foreach ($data as $time => $callStack) {
             $wt = (int)(($time - $prevTime) * 1000000);
-            $functions = \explode('==>', $callStack);
+            $functions = explode('==>', $callStack);
             $prevIteration = 0;
             $mainKey = $functions[$prevIteration];
             if (!isset($resultData[$mainKey])) {

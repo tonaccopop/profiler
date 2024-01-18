@@ -8,6 +8,8 @@ use SpiralPackages\Profiler\Profiler;
 
 final class XhprofDriver implements DriverInterface
 {
+    private const EXTENSION_NAME = 'xhprof';
+
     /** @var int Preventing multiple nested calls. */
     private static int $nestedCalls = 0;
 
@@ -16,7 +18,7 @@ final class XhprofDriver implements DriverInterface
 
     public function start(array $context = [], int $flags = self::DEFAULT_FLAGS): void
     {
-        if (self::$nestedCalls++ > 0) {
+        if (self::$nestedCalls++ > 0 || !$this->isSupported()) {
             return;
         }
 
@@ -25,23 +27,28 @@ final class XhprofDriver implements DriverInterface
         ];
 
         if (isset($context[Profiler::IGNORED_FUNCTIONS_KEY])) {
-            $options['ignored_functions'] = \array_merge(
+            $options['ignored_functions'] = array_merge(
                 $options['ignored_functions'],
                 $context[Profiler::IGNORED_FUNCTIONS_KEY]
             );
         }
 
         /** @psalm-suppress UndefinedFunction */
-        \xhprof_enable($flags, $options);
+        xhprof_enable($flags, $options);
     }
 
     public function end(): array
     {
-        if (--self::$nestedCalls > 0) {
+        if (--self::$nestedCalls > 0 || !$this->isSupported()) {
             return [];
         }
 
         /** @psalm-suppress UndefinedFunction */
-        return \xhprof_disable() ?? [];
+        return xhprof_disable() ?? [];
+    }
+
+    public function isSupported(): bool
+    {
+        return extension_loaded(self::EXTENSION_NAME);
     }
 }

@@ -12,8 +12,8 @@ use SpiralPackages\Profiler\Storage\StorageInterface;
 class ProfilerTest extends TestCase
 {
     private Profiler $profiler;
-    private m\MockInterface|StorageInterface $storage;
-    private m\MockInterface|DriverInterface $driver;
+    private StorageInterface $storage;
+    private DriverInterface $driver;
 
     protected function setUp(): void
     {
