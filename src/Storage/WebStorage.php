@@ -22,7 +22,7 @@ final class WebStorage implements StorageInterface
         string $endpoint,
         string $method = 'POST',
         array $options = [],
-        ?ConverterInterface $converter
+        ?ConverterInterface $converter = null
     ) {
         $this->converter = $converter ?? new NullConverter();
         $this->options = $options;
