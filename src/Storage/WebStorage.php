@@ -4,40 +4,28 @@ declare(strict_types=1);
 
 namespace SpiralPackages\Profiler\Storage;
 
-use DateTimeInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use SpiralPackages\Profiler\Converter\ConverterInterface;
 use SpiralPackages\Profiler\Converter\NullConverter;
 
 final class WebStorage implements StorageInterface
 {
-    private HttpClientInterface $httpClient;
-    private string $endpoint;
-    private string $method = 'POST';
-    private array $options = [];
-    private ConverterInterface $converter;
-
     public function __construct(
-        HttpClientInterface $httpClient,
-        string $endpoint,
-        string $method = 'POST',
-        array $options = [],
-        ?ConverterInterface $converter = null
+        private readonly HttpClientInterface $httpClient,
+        private readonly string $endpoint,
+        private readonly string $method = 'POST',
+        private array $options = [],
+        private readonly ConverterInterface $converter = new NullConverter(),
     ) {
-        $this->converter = $converter ?? new NullConverter();
-        $this->options = $options;
-        $this->method = $method;
-        $this->endpoint = $endpoint;
-        $this->httpClient = $httpClient;
     }
 
-    public function store(string $appName, array $tags, DateTimeInterface $date, array $data): void
+    public function store(string $appName, array $tags, \DateTimeInterface $date, array $data): void
     {
         $this->options['json'] = [
             'profile' => $this->converter->convert($data),
             'tags' => $tags,
             'app_name' => $appName,
-            'hostname' => gethostname(),
+            'hostname' => \gethostname(),
             'date' => $date->getTimestamp(),
         ];
 
