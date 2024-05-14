@@ -9,19 +9,21 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use SpiralPackages\Profiler\Converter\ConverterInterface;
 use SpiralPackages\Profiler\Converter\NullConverter;
 
+use function gethostname;
+
 final class WebStorage implements StorageInterface
 {
     private HttpClientInterface $httpClient;
     private string $endpoint;
-    private string $method = 'POST';
-    private array $options = [];
+    private string $method;
+    private array $options;
     private ConverterInterface $converter;
 
     public function __construct(
         HttpClientInterface $httpClient,
         string $endpoint,
-        string $method = 'POST',
-        array $options = [],
+        string $method,
+        array $options,
         ?ConverterInterface $converter
     ) {
         $this->converter = $converter ?? new NullConverter();

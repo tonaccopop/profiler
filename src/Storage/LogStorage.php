@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SpiralPackages\Profiler\Storage;
 
+use DateTimeInterface;
 use Psr\Log\LoggerInterface;
 use SpiralPackages\Profiler\Converter\ConverterInterface;
 use SpiralPackages\Profiler\Converter\NullConverter;
@@ -12,6 +13,7 @@ final class LogStorage implements StorageInterface
 {
     private LoggerInterface $logger;
     private ConverterInterface $converter;
+
     public function __construct(
         LoggerInterface $logger,
         ConverterInterface $converter = null
@@ -20,7 +22,7 @@ final class LogStorage implements StorageInterface
         $this->converter = $converter ?? new NullConverter();
     }
 
-    public function store(string $appName, array $tags, \DateTimeInterface $date, array $data): void
+    public function store(string $appName, array $tags, DateTimeInterface $date, array $data): void
     {
         $this->logger->info('Profile data', [
             'app' => $appName,
